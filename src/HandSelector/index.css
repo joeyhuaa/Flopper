@@ -1,0 +1,24 @@
+#hand-selector {
+  border: green solid 1px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: small;
+  cursor: pointer;
+  width: 2em;
+  height: 2em;
+}
+
+/* adjust font-size in each cell to allow smooth resizing */
+@media (min-width: 800px) {
+  #hand-selector {
+    font-size: x-small;
+  }
+}
+
+@media (min-width: 1000px) {
+  #hand-selector {
+    font-size: small;
+  }
+}

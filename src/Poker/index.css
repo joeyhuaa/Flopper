@@ -1,0 +1,27 @@
+#main {
+  border: blue solid 2px;
+  display: grid;
+  grid-template-columns: 40% 40% 20%;
+  text-align: center;
+  /* display: flex;
+  flex-direction: row; */
+}
+
+#display-and-button-container {
+  border: greenyellow solid 2px;
+  display: grid;
+  grid-template-rows: repeat(10, 10%);
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  #main {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #display-and-button-container {
+    grid-template-rows: repeat(3, 33%);
+  }
+}
