@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import RangeChart from '../RangeChart'
 import '../App.css'
 import './index.css'
@@ -155,28 +155,26 @@ function isOnePair(hand) {
 */
 
 // this is where all the main simulation logic takes place
-class Poker extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      ranges: [[], []],
-      equity1: 0,
-      equity2: 0
-    }
-    this.handleClick = this.handleClick.bind(this)
-    this.test = this.test.bind(this)
-  }
+let Poker = () => {
+  let [ranges, setRanges] = useState([[], []])
+  let [equity1, setEquity1] = useState(0)
+  let [equity2, setEquity2] = useState(0)
 
-  getEquities(wins) {
+  useEffect(() => {
+    // console.log(ranges)
+  }, [ranges])
+
+  function getEquities(wins) {
     // should take ties into account but do this later...
     let playerOneEquity = wins.filter(x => x === 1).length / wins.length
     let playerTwoEquity = wins.filter(x => x === 2).length / wins.length
     return [playerOneEquity, playerTwoEquity]
   }
 
-  getBestHand(hc, comm) {
+  function getBestHand(hc, comm) {
     // 1
     let sevenCards = hc.concat(comm)
+    // console.log(sevenCards)
     let fiveCardCombos = Combinatorics.combination(sevenCards, 5).toArray()
     let fiveCardRanks = fiveCardCombos.map(combo => madeHands[getRank(combo)])
     let fiveCardCombosRanks = fiveCardCombos.map((combo, i) => [combo, fiveCardRanks[i]])
@@ -205,7 +203,7 @@ class Poker extends React.Component {
     }
   }
 
-  getWinner(handmap1, handmap2) {
+  function getWinner(handmap1, handmap2) {
     // figure out the winner 
     if (handmap1.handRank > handmap2.handRank) {
       return 1
@@ -229,10 +227,11 @@ class Poker extends React.Component {
   }
 
   // Monte Carlo simulation
-  monteCarlo(ranges, n) {
+  function monteCarlo(ranges, n) {
     // array that holds which player wins each run
     let wins = [] // 0 - tie, 1 - P1, 2 - P2
     let deck, community, hc1, hc2, bestmap1, bestmap2
+    let suitedRanges = assignSuitsToRanges(ranges)
 
     // for loop that runs the MONTE CARLO SIM
     for (let i = 0; i < n; i++) {
@@ -241,33 +240,38 @@ class Poker extends React.Component {
 
       /* remove selected hole cards - make this more efficient...! */
       let cardsToRemove = []
-      for (let range of ranges) {
+      for (let range of suitedRanges) {
         for (let holeCards of range) {
+          if (holeCards.includes('s')) {
+
+          }
           for (let card of holeCards) {
             cardsToRemove.push(card)
           }
         }
       }
       deck = removeCards(deck, cardsToRemove)
+      // console.log(deck)
 
       // pick random holecards from each range
-      hc1 = ranges[0][Math.floor(Math.random() * ranges[0].length)]
-      hc2 = ranges[1][Math.floor(Math.random() * ranges[1].length)]
+      hc1 = suitedRanges[0][Math.floor(Math.random() * ranges[0].length)]
+      hc2 = suitedRanges[1][Math.floor(Math.random() * ranges[1].length)]
 
       // deal community
       deck = shuffle(deck)
       community = [deck.pop(),deck.pop(),deck.pop(),deck.pop(),deck.pop()] 
+      // console.log(deck)
 
       // get best hand for each pair of holecards
-      bestmap1 = this.getBestHand(hc1, community)
-      bestmap2 = this.getBestHand(hc2, community)
+      bestmap1 = getBestHand(hc1, community)
+      bestmap2 = getBestHand(hc2, community)
 
-      wins.push(this.getWinner(bestmap1, bestmap2)) // get winner! 
+      wins.push(getWinner(bestmap1, bestmap2)) // get winner! 
     }
     return wins
   }
 
-  getRandomSuits(n) {
+  function getRandomSuits(n) {
     let selectedSuits = []
     for (let i = 0; i < n; i++) {
       let s = suits[Math.floor(Math.random() * 4)]
@@ -280,49 +284,48 @@ class Poker extends React.Component {
     return selectedSuits
   }
 
-  getRanges() {
-    let s
-    let ranges = this.state.ranges.map(range => range.map(hand => {
+  function assignSuitsToRanges(handRanges) {
+    return handRanges.map(range => range.map(hand => {
       if (hand.includes('s')) {          // suited 
-        s = this.getRandomSuits(1)
+        let s = getRandomSuits(1)
         return [hand[0] + s[0], hand[1] + s[0]]
       } else {                           // offsuit or pairs
-        s = this.getRandomSuits(2)
+        let s = getRandomSuits(2)
         return [hand[0] + s[0], hand[1] + s[1]]
       }
     }))
-    return ranges
   }
 
   // first function called on click
-  handleClick() {
-    let ranges = this.getRanges()
-    let wins = this.monteCarlo(ranges, 5000) 
-    let equities = this.getEquities(wins)
-    this.setState({
-      equity1: equities[0], equity2: equities[1]
-    })
+  function handleClick() {
+    let wins = monteCarlo(ranges, 5000) 
+    let equities = getEquities(wins)
+    setEquity1(equities[0])
+    setEquity2(equities[1])
   }
 
-  test() {
-    console.log(this.getRanges())
+  function updateRanges(newRange, i) {
+    let newRanges = [...ranges]
+    newRanges[i] = newRange
+    setRanges(newRanges)
   }
 
-  render() {
-    return (
-      <div id='main'>
-        <RangeChart range={this.state.ranges[0]}/>
-        <RangeChart range={this.state.ranges[1]}/>
-        <div id='display-and-button-container'>
-          <div className='container'>{this.state.equity1}</div>
-          <div className='container'>{this.state.equity2}</div>
-          <div className='container'>
-            <button onClick={this.handleClick}>Calculate</button>
-          </div>
+  return (
+    <div id='main'>
+      {ranges.map((_, i) =>
+        <RangeChart 
+          getSelectedRange={newRange => updateRanges(newRange, i)}
+        />
+      )}
+      <div id='display-and-button-container'>
+        <div className='container'>{equity1}</div>
+        <div className='container'>{equity2}</div>
+        <div className='container'>
+          <button onClick={handleClick}>Calculate</button>
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default Poker
