@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useRef } from 'react'
 import RangeChart from '../RangeChart'
 import '../App.css'
 import './index.css'
@@ -50,6 +50,7 @@ function sumCardRanks(hand) {
 }
 
 function getRank(hand) {
+  // console.log(hand)
   if (isStraight(hand) && isFlush(hand)) {
     return 'straight flush'
   } else if (isQuads(hand)) {
@@ -73,6 +74,7 @@ function getRank(hand) {
 
 // bug occurring here?
 function isQuads(hand) {
+  // console.log(hand)
   let ranksArray = hand.map(card => card[0])
   let ranksSet = new Set(ranksArray)
   let rCount = ranksArray.filter((r) => r === ranksArray[0]).length
@@ -235,36 +237,20 @@ let Poker = () => {
 
     // for loop that runs the MONTE CARLO SIM
     for (let i = 0; i < n; i++) {
-      // remake the deck
+      // create the deck
       deck = createDeck()
 
-      /* remove selected hole cards - make this more efficient...! */
-      let cardsToRemove = []
-      for (let range of suitedRanges) {
-        for (let holeCards of range) {
-          if (holeCards.includes('s')) {
-
-          }
-          for (let card of holeCards) {
-            cardsToRemove.push(card)
-          }
-        }
-      }
-      deck = removeCards(deck, cardsToRemove)
-      // console.log(deck)
-
       // pick random holecards from each range
-      hc1 = suitedRanges[0][Math.floor(Math.random() * ranges[0].length)]
-      hc2 = suitedRanges[1][Math.floor(Math.random() * ranges[1].length)]
+      let holecards = suitedRanges.map(r => r[Math.floor(Math.random() * r.length)])
+      deck = removeCards(deck, [].concat(...holecards))
 
       // deal community
       deck = shuffle(deck)
       community = [deck.pop(),deck.pop(),deck.pop(),deck.pop(),deck.pop()] 
-      // console.log(deck)
 
       // get best hand for each pair of holecards
-      bestmap1 = getBestHand(hc1, community)
-      bestmap2 = getBestHand(hc2, community)
+      bestmap1 = getBestHand(holecards[0], community)
+      bestmap2 = getBestHand(holecards[1], community)
 
       wins.push(getWinner(bestmap1, bestmap2)) // get winner! 
     }
@@ -314,6 +300,7 @@ let Poker = () => {
     <div id='main'>
       {ranges.map((_, i) =>
         <RangeChart 
+          key={i}
           getSelectedRange={newRange => updateRanges(newRange, i)}
         />
       )}
@@ -329,21 +316,3 @@ let Poker = () => {
 }
 
 export default Poker
-
-/* BUGS
-
-- SELECT DRAG:
-  - figure out how to select drag and update states
-  - figure out how to responsively design a grid...
-
-- pair vs. 1 over 1 under is 50-50, should be 70-30
-- the monte carlo algo doesn't seem to be random....
-- sometimes the probabilities don't add up to 1
-
-*/
-
-/* THINGS TO IMPROVE ON
-
-- algorithm is pretty slow, make it faster
-
-*/

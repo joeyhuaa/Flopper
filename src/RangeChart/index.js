@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import './index.css'
 import '../App.css'
 import HandSelector from '../HandSelector'
@@ -21,25 +21,19 @@ let holeCards = [
 ]
 
 let RangeChart = ({getSelectedRange}) => {
-  let [selected, setSelected] = useState([])
 
   let selectors = holeCards.map((hand, i) => (
     <HandSelector
       key={i} 
       hand={hand} 
-      updateSelected={updateSelected}
     />
   ))
 
-  function handleSelecting(hands) {
-    getSelectedRange(hands.map(h => h.props.hand))
+  function handleSelecting(selectingHands) {
   }
 
-  function updateSelected(hand) {
-    let newSelected = [...selected]
-    if (newSelected.includes(hand)) newSelected.splice(newSelected.indexOf(hand), 1)
-    else newSelected.push(hand)
-    setSelected(newSelected)
+  function handleSelectionFinish(selectedHands) {
+    getSelectedRange(selectedHands.map(h => h.props.hand))
   }
     
   return (
@@ -48,9 +42,9 @@ let RangeChart = ({getSelectedRange}) => {
       clickClassName='tick'
       enableDeselect
       allowClickWithoutSelected={false}
-      duringSelection={handleSelecting}
+      // duringSelection={handleSelecting}
       // onSelectionClear={handleSelectionClear}
-      // onSelectionFinish={handleSelectionFinish}
+      onSelectionFinish={handleSelectionFinish}
       // onSelectedItemUnmount={handleSelectedItemUnmount}
     >
       {selectors}
