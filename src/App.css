@@ -1,12 +1,12 @@
 .App {
-  border: orange solid 3px;
+  /* border: orange solid 3px; */
   display: grid;
   background-color: whitesmoke;
   padding: 5%;
 }
 
 .container {
-  border: red solid 1.5px;
+  /* border: red solid 1.5px; */
   border-radius: .5em;
   min-height: 2em;
   margin: 1em;

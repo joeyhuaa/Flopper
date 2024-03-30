@@ -1,4 +1,5 @@
-import React, { useState, useEffect,useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+
 import RangeChart from '../RangeChart'
 import '../App.css'
 import './index.css'
@@ -158,12 +159,13 @@ function isOnePair(hand) {
 
 // this is where all the main simulation logic takes place
 let Poker = () => {
-  let [ranges, setRanges] = useState([[], []])
-  let [equity1, setEquity1] = useState(0)
-  let [equity2, setEquity2] = useState(0)
+  const [ranges, setRanges] = useState([[], []])
+  const [equity1, setEquity1] = useState(0)
+  const [equity2, setEquity2] = useState(0)
+  const selectableRefs = [useRef(), useRef()] // 1 for each range chart
 
   useEffect(() => {
-    // console.log(ranges)
+    console.log('ranges',ranges)
   }, [ranges])
 
   function getEquities(wins) {
@@ -296,19 +298,45 @@ let Poker = () => {
     setRanges(newRanges)
   }
 
+  function equityToPercentage(equity) {
+    return (equity * 100).toFixed(2)
+  }
+
+  function reset() {
+    selectableRefs.forEach(ref => ref.current.clearSelection())
+
+    setRanges([[], []])
+    setEquity1(0)
+    setEquity2(0)
+  }
+
   return (
     <div id='main'>
       {ranges.map((_, i) =>
         <RangeChart 
           key={i}
           getSelectedRange={newRange => updateRanges(newRange, i)}
+          selectableRef={selectableRefs[i]}
+          title={`Player ${i+1} Equity`}
         />
       )}
+      
       <div id='display-and-button-container'>
-        <div className='container'>{equity1}</div>
-        <div className='container'>{equity2}</div>
         <div className='container'>
-          <button onClick={handleClick}>Calculate</button>
+          <b>Player 1 Preflop Equity: </b>
+          {equityToPercentage(equity1)}%
+        </div>
+        <div className='container'>
+          <b>Player 2 Preflop Equity: </b>
+          {equityToPercentage(equity2)}%
+        </div>
+        <div className='container'>
+          <button onClick={handleClick} disabled={ranges[0].length === 0 || ranges[1].length === 0}>
+            Calculate
+          </button>
+          <button onClick={reset} style={{margin:'10px'}}>
+            Reset
+          </button>
         </div>
       </div>
     </div>

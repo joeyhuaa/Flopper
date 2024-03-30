@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import './index.css'
 import { createSelectable } from 'react-selectable-fast'
 
@@ -15,14 +15,17 @@ let HandSelector = ({
       id='hand-selector' 
       style={isSelecting || isSelected ? styles.selected : null}
     >
-      {hand}
+      <span 
+        style={{fontSize:'12.5px'}}
+      >{hand}</span>
     </div>
   )
 }
 
 const styles = {
   selected: {
-    fontWeight:'bold'
+    // fontWeight:'bold',
+    backgroundColor:'#a8e3b9',
   }
 }
 

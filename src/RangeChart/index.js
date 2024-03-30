@@ -20,7 +20,7 @@ let holeCards = [
   'A2o','K2o','Q2o','J2o','T2o','92o','82o','72o','62o','52o','42o','32o','22'
 ]
 
-let RangeChart = ({getSelectedRange}) => {
+const RangeChart = ({getSelectedRange, selectableRef, title}) => {
 
   let selectors = holeCards.map((hand, i) => (
     <HandSelector
@@ -29,26 +29,27 @@ let RangeChart = ({getSelectedRange}) => {
     />
   ))
 
-  function handleSelecting(selectingHands) {
-  }
-
   function handleSelectionFinish(selectedHands) {
     getSelectedRange(selectedHands.map(h => h.props.hand))
   }
     
   return (
-    <SelectableGroup
-      className='range-chart-flex'
-      clickClassName='tick'
-      enableDeselect
-      allowClickWithoutSelected={false}
-      // duringSelection={handleSelecting}
-      // onSelectionClear={handleSelectionClear}
-      onSelectionFinish={handleSelectionFinish}
-      // onSelectedItemUnmount={handleSelectedItemUnmount}
-    >
-      {selectors}
-    </SelectableGroup>
+    <div style={{minWidth: '500px'}}>
+      <h3 style={{width:150}}>{title}</h3>
+      <SelectableGroup
+        ref={selectableRef}
+        className='range-chart-flex'
+        clickClassName='tick'
+        enableDeselect
+        allowClickWithoutSelected={false}
+        // duringSelection={handleSelecting}
+        // onSelectionClear={handleSelectionClear}
+        onSelectionFinish={handleSelectionFinish}
+        // onSelectedItemUnmount={handleSelectedItemUnmount}
+      >
+        {selectors}
+      </SelectableGroup>
+    </div>
   )
 }
 
