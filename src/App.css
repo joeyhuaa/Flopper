@@ -3,6 +3,8 @@
   display: grid;
   background-color: whitesmoke;
   padding: 5%;
+  color: whitesmoke;
+  background-color: #2b2626;
 }
 
 .container {

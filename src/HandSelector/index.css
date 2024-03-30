@@ -1,6 +1,6 @@
 #hand-selector {
   /* border: green solid 1px; */
-  color: black;
+  color: whitesmoke;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,6 +8,10 @@
   cursor: pointer;
   width: 2em;
   height: 2em;
+}
+
+button {
+  font-size: 17px;
 }
 
 /* adjust font-size in each cell to allow smooth resizing */

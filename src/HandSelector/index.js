@@ -25,6 +25,7 @@ let HandSelector = ({
 const styles = {
   selected: {
     // fontWeight:'bold',
+    color: 'black',
     backgroundColor:'#a8e3b9',
   }
 }
