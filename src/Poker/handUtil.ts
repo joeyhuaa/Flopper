@@ -1,7 +1,7 @@
 import { ranks } from "./deckUtil"
 
-export function sortHand(hand) { // insertion sort
-  hand = hand.map(card => card[0]) // ranks only, remove suits
+export function sortHand(hand: string[]): number[] { // insertion sort
+  hand = hand.map<string>(card => card[0]) // ranks only, remove suits
   for (let i = 1; i < hand.length; i++) {
     while (i > 0 && ranks.indexOf(hand[i]) < ranks.indexOf(hand[i-1])) {
       [hand[i], hand[i-1]] = [hand[i-1], hand[i]]
@@ -12,7 +12,7 @@ export function sortHand(hand) { // insertion sort
 }
 
 
-export function getRank(hand) {
+export function getRank(hand: string[]): string {
   if (isStraight(hand) && isFlush(hand)) {
     return 'straight flush'
   } else if (isQuads(hand)) {
@@ -35,7 +35,7 @@ export function getRank(hand) {
 }
 
 // bug occurring here?
-function isQuads(hand) {
+function isQuads(hand: string[]): boolean {
   // console.log(hand)
   let ranksArray = hand.map(card => card[0])
   let ranksSet = new Set(ranksArray)
@@ -47,7 +47,7 @@ function isQuads(hand) {
   }
 }
 
-function isBoat(hand) {
+function isBoat(hand: string[]): boolean {
   let ranksArray = hand.map((card) => card[0])
   let ranksSet = new Set(ranksArray)
   let rCount = ranksArray.filter((r) => r === ranksArray[0]).length
@@ -58,7 +58,7 @@ function isBoat(hand) {
   }
 }
 
-function isFlush(hand) {
+function isFlush(hand: string[]): boolean {
   let suitsSet = new Set(hand.map((card) => card[1]))
   if (suitsSet.size === 1) {
     return true
@@ -67,7 +67,7 @@ function isFlush(hand) {
   }
 }
 
-function isStraight(hand) {
+function isStraight(hand: string[]): boolean {
   for (let card of hand) {
     let index = hand.indexOf(card)
     let difference = ranks.indexOf(card[0]) - ranks.indexOf(hand[0])
@@ -79,7 +79,7 @@ function isStraight(hand) {
   } return true
 }
 
-function isTrips(hand) {
+function isTrips(hand: string[]): boolean {
   let ranksArray = hand.map((card) => card[0])
   let ranksSet = new Set(ranksArray)
   let rCount = ranksArray.filter((r) => r === ranksArray[2]).length
@@ -90,7 +90,7 @@ function isTrips(hand) {
   }
 }
 
-function isTwoPair(hand) {
+function isTwoPair(hand: string[]): boolean {
   let ranksArray = hand.map((card) => card[0])
   let ranksSet = new Set(ranksArray)
   let rCount = ranksArray.filter((r) => r === ranksArray[0]).length
@@ -101,7 +101,7 @@ function isTwoPair(hand) {
   }
 }
 
-function isOnePair(hand) {
+function isOnePair(hand: string[]): boolean {
   let ranksSet = new Set(hand.map((card) => card[0]))
   if (ranksSet.size === 4) { 
     return true 
