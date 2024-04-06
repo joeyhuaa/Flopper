@@ -13,21 +13,23 @@ export const madeHands = {
 }
 
 // functions we need to do card/deck operations
-export function createDeck() {
-  return ranks.reduce((d,rank) => {
+export function createDeck(): string[] {
+  const deck = ranks.reduce<string[]>((d,rank) => {
     return d.concat([rank+suits[0],rank+suits[1],rank+suits[2],rank+suits[3]])
   }, [])
+  return deck
 }
 
-export function removeCards(deck, cardsToRemove) {
+export function removeCards(deck: string[], cardsToRemove: string[]): string[] {
   for (let card of cardsToRemove) {
+    console.log('card',card)
     let i = deck.indexOf(card)
     deck.splice(i,1)
   }
   return deck
 }
 
-export function shuffle(deck) {
+export function shuffle(deck: string[]): string[] {
   for (let i = deck.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]]

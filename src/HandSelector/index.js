@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import './index.css'
 import { createSelectable } from 'react-selectable-fast'
 
