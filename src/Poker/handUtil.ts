@@ -2,7 +2,7 @@ import { ranks } from "./deckUtil"
 
 export interface HandMap {
   hand: string[],
-  handRank: string,
+  handRank: number,
   sumCardRanks?: number
 }
 

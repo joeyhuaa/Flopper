@@ -28,7 +28,7 @@ const Poker = () => {
 
   function getBestHand(hc: string[], comm: string[]): {
     hand: string[],
-    handRank: string,
+    handRank: number,
     sumCardRanks: number
   } {
     // 1
@@ -86,7 +86,7 @@ const Poker = () => {
   }
 
   // Monte Carlo simulation
-  function monteCarlo(ranges: string[], n: number): number[] {
+  function monteCarlo(ranges: string[][], n: number): number[] {
     // array that holds which player wins each run
     let wins = [] // 0 - tie, 1 - P1, 2 - P2
     let deck, community, hc1, hc2, bestmap1, bestmap2
@@ -127,7 +127,7 @@ const Poker = () => {
     return selectedSuits
   }
 
-  function assignSuitsToRanges(handRanges: string[][]): string[][][] {
+  function assignSuitsToRanges(handRanges: string[][]) {
     return handRanges.map(range => range.map(hand => {
       if (hand.includes('s')) {          // suited 
         let s = getRandomSuits(1)
