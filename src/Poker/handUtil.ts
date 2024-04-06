@@ -1,5 +1,12 @@
 import { ranks } from "./deckUtil"
 
+export interface HandMap {
+  hand: string[],
+  handRank: string,
+  sumCardRanks?: number
+}
+
+
 export function sortHand(hand: string[]): number[] { // insertion sort
   hand = hand.map<string>(card => card[0]) // ranks only, remove suits
   for (let i = 1; i < hand.length; i++) {

@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import RangeChart from '../RangeChart'
 import { createDeck, removeCards, shuffle } from './deckUtil' //functions
 import { ranks, suits, madeHands } from './deckUtil' //constants
-import { getRank, sortHand } from './handUtil'
+import { getRank, sortHand, HandMap } from './handUtil'
 const Combinatorics = require('js-combinatorics')
 
 // this is where all the main simulation logic takes place
@@ -15,29 +15,29 @@ const Poker = () => {
   const [equity2, setEquity2] = useState(0)
   const selectableRefs = [useRef(), useRef()] // 1 for each range chart
 
-  useEffect(() => {
-    console.log('ranges',ranges)
-  }, [ranges])
-
-  function sumCardRanks(hand) {
+  function sumCardRanks(hand: string[]): number {
     return hand.reduce((sum,card) => sum + ranks.indexOf(card[0]), 0)
   }
 
-  function getEquities(wins) {
+  function getEquities(wins: number[]): number[] {
     // should take ties into account but do this later...
     let playerOneEquity = wins.filter(x => x === 1).length / wins.length
     let playerTwoEquity = wins.filter(x => x === 2).length / wins.length
     return [playerOneEquity, playerTwoEquity]
   }
 
-  function getBestHand(hc, comm) {
+  function getBestHand(hc: string[], comm: string[]): {
+    hand: string[],
+    handRank: string,
+    sumCardRanks: number
+  } {
     // 1
     let sevenCards = hc.concat(comm)
     // console.log(sevenCards)
     let fiveCardCombos = Combinatorics.combination(sevenCards, 5).toArray()
-    let fiveCardRanks = fiveCardCombos.map(combo => madeHands[getRank(combo)])
-    let fiveCardCombosRanks = fiveCardCombos.map((combo, i) => [combo, fiveCardRanks[i]])
-    let bestCombosRanks = fiveCardCombosRanks.filter(val => val[1] === Math.max(...fiveCardRanks))
+    let fiveCardRanks = fiveCardCombos.map((combo: string[]) => madeHands[getRank(combo)])
+    let fiveCardCombosRanks = fiveCardCombos.map((combo: any, i: string | number) => [combo, fiveCardRanks[i]])
+    let bestCombosRanks = fiveCardCombosRanks.filter((val: number[]) => val[1] === Math.max(...fiveCardRanks))
     
     // 2
     // algo for getting the best hand:
@@ -62,14 +62,14 @@ const Poker = () => {
     }
   }
 
-  function getWinner(handmap1, handmap2) {
+  function getWinner(handmap1: HandMap, handmap2: HandMap): number {
     // figure out the winner 
     if (handmap1.handRank > handmap2.handRank) {
       return 1
     } else if (handmap1.handRank < handmap2.handRank) {
       return 2
     } else { // in case both hands are have equal handRanks, sort each hand s -> L, back traverse
-      let [hand1, hand2] = [sortHand(handmap1.hand), sortHand(handmap2.hand)] // hand1 & hand2 are arrays of ints post sorting!
+      const [hand1, hand2] = [sortHand(handmap1.hand), sortHand(handmap2.hand)] // hand1 & hand2 are arrays of ints post sorting!
 
       // back traverse 
       for (let i = hand1.length - 1; i > 0; i--) {
@@ -86,7 +86,7 @@ const Poker = () => {
   }
 
   // Monte Carlo simulation
-  function monteCarlo(ranges, n) {
+  function monteCarlo(ranges: string[], n: number): number[] {
     // array that holds which player wins each run
     let wins = [] // 0 - tie, 1 - P1, 2 - P2
     let deck, community, hc1, hc2, bestmap1, bestmap2
@@ -98,7 +98,7 @@ const Poker = () => {
       deck = createDeck()
 
       // pick random holecards from each range
-      let holecards = suitedRanges.map(r => r[Math.floor(Math.random() * r.length)])
+      let holecards = suitedRanges.map((r: string[]) => r[Math.floor(Math.random() * r.length)])
       deck = removeCards(deck, [].concat(...holecards))
 
       // deal community
@@ -114,8 +114,8 @@ const Poker = () => {
     return wins
   }
 
-  function getRandomSuits(n) {
-    let selectedSuits = []
+  function getRandomSuits(n: number): string[] {
+    let selectedSuits: string[] = []
     for (let i = 0; i < n; i++) {
       let s = suits[Math.floor(Math.random() * 4)]
       if (!selectedSuits.includes(s)) {
@@ -127,7 +127,7 @@ const Poker = () => {
     return selectedSuits
   }
 
-  function assignSuitsToRanges(handRanges) {
+  function assignSuitsToRanges(handRanges: string[][]): string[][][] {
     return handRanges.map(range => range.map(hand => {
       if (hand.includes('s')) {          // suited 
         let s = getRandomSuits(1)
