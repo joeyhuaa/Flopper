@@ -1,39 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
-
-import RangeChart from '../RangeChart'
 import '../App.css'
 import './index.css'
 
+import React, { useState, useEffect, useRef } from 'react'
+
+import RangeChart from '../RangeChart'
+import { createDeck, removeCards, shuffle } from './deckUtil' //functions
+import { ranks, suits, madeHands } from './deckUtil' //constants
+
 // variables we need
 let Combinatorics = require('js-combinatorics')
-let ranks = ['2','3','4','5','6','7','8','9','T','J','Q','K','A']
-let suits = ['c','d','h','s']
-let madeHands = {'high card':1, 'one pair':2, 'two pair':3, 
-                 'trips':4, 'straight':5,'flush':6, 
-                 'boat':7, 'quads':8, 'straight flush':9}
-
-// functions we need to do card/deck operations
-function createDeck() {
-  return ranks.reduce((d,rank) => {
-    return d.concat([rank+suits[0],rank+suits[1],rank+suits[2],rank+suits[3]])
-  }, [])
-}
-
-function removeCards(deck, cardsToRemove) {
-  for (let card of cardsToRemove) {
-    let i = deck.indexOf(card)
-    deck.splice(i,1)
-  }
-  return deck
-}
-
-function shuffle(deck) {
-  for (let i = deck.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]]
-  } 
-  return deck
-}
 
 function sortHand(hand) { // insertion sort
   hand = hand.map(card => card[0]) // ranks only, remove suits
